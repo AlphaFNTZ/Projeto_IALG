@@ -1,3 +1,6 @@
+// Alunos: Juliano Cesar Ferreira Ramos, Bruna Motta de Macedo, Livia Pessoa de Andrade
+// Turma: 22A
+
 #include <iostream>
 #include <fstream>
 #include <locale.h>
