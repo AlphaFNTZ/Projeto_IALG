@@ -21,7 +21,7 @@ string add()
     setlocale(LC_ALL, "UTF-8");
 
     int location = 0, lines = 0, size = 40;
-    string line;
+    string line, teste;
 
     ifstream input_file("Banco_de_dados.csv");
 
@@ -52,6 +52,8 @@ string add()
         cout << "Verificando ID..." << endl;
 
         location = line.find(';');
+        teste = line.substr(1, location);
+        cout << teste << endl;
         games[lines].id = stoi(line.substr(1, location));
         line = line.substr(location + 1, line.length());
 
