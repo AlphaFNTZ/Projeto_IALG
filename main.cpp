@@ -7,7 +7,7 @@
 
 using namespace std;
 
-struct database
+struct dataBase
 {
     int id;
     string name;
@@ -16,74 +16,78 @@ struct database
     string description;
 };
 
-string add()
+void load(dataBase *&games, int &size, int &lines)
 {
-    setlocale(LC_ALL, "UTF-8");
+    int location = 0;
+    string line = "";
 
-    int location = 0, lines = 0, size = 40;
-    string line, teste;
+    ifstream inputFile("Banco_de_dados.csv");
 
-    ifstream input_file("Banco_de_dados.csv");
-
-    if (!input_file)
+    if (!inputFile)
     {
         cerr << "Erro ao abrir o arquivo." << endl;
-        return "error";
+        return;
     }
 
-    database *games, *new_games;
-    games = new database[40];
+    getline(inputFile, line); // linha de descrição de dados
 
-    while (getline(input_file, line))
+    while (getline(inputFile, line))
+    // while (lines <= 2)
     {
         if (lines >= size)
         {
             // Redimensionar o array se necessário
-            new_games = new database[size + 10];
+            dataBase *newGames = new dataBase[size + 10];
             for (int i = 0; i < size; i++)
             {
-                new_games[i] = games[i];
+                newGames[i] = games[i];
             }
             delete[] games;
-            games = new_games;
+            games = newGames;
             size += 10;
         }
 
-        cout << "Verificando ID..." << endl;
+        // cout << "Verificando ID..." << endl;
 
         location = line.find(';');
-        teste = line.substr(1, location);
-        cout << teste << endl;
         games[lines].id = stoi(line.substr(1, location));
         line = line.substr(location + 1, line.length());
 
-        cout << "Verificando nome..." << endl;
+        // cout << "Verificando nome..." << endl;
 
         location = line.find(';');
-        games[lines].name = line.substr(2, location - 4);
+        games[lines].name = line.substr(0, location);
         line = line.substr(location + 1, line.length());
 
-        cout << "Verificando ano..." << endl;
+        // cout << "Verificando ano..." << endl;
 
         location = line.find(';');
         games[lines].age = stoi(line.substr(0, location));
         line = line.substr(location + 1, line.length());
 
-        cout << "Verificando plataforma..." << endl;
+        // cout << "Verificando plataforma..." << endl;
 
         location = line.find(';');
         games[lines].platform = line.substr(0, location);
         line = line.substr(location + 1, line.length());
 
-        cout << "Verificando descrição..." << endl;
+        // cout << "Verificando descrição..." << endl;
 
-        games[lines].description = line.substr(2, line.length() - 5);
+        games[lines].description = line.substr(0, line.length() - 1);
 
         lines++;
 
-        cout << "A linha " << lines << " foi escrita com sucesso" << endl;
+        // cout << "A linha " << lines << " foi escrita com sucesso" << endl;
+        // cout << endl;
     }
 
+    cout << endl;
+    cout << "Pré-leitura do arquivo concluida com sucesso" << endl;
+    cout << endl;
+}
+
+string search(dataBase *&games, int &lines)
+{
     for (int i = 0; i < lines; i++)
     {
         cout << games[i].id << endl;
@@ -94,33 +98,95 @@ string add()
         cout << endl;
     }
 
-    return "success";
+    cout << "Leitura da lista de jogos concluida com sucesso" << endl;
+
+    return "";
+}
+
+string add(dataBase *&games, int &size, int &lines)
+{
+    // setlocale(LC_ALL, "UTF-8");
+    if (lines >= size)
+    {
+        // Redimensionar o array se necessário
+        dataBase *newGames = new dataBase[size + 10];
+        for (int i = 0; i < size; i++)
+        {
+            newGames[i] = games[i];
+        }
+        delete[] games;
+        games = newGames;
+        size += 10;
+    }
+
+    dataBase newGame;
+
+    // cout << lines << endl;
+
+    cout << "--------- MENU DE CADASTRO ---------";
+
+    cout << "Digite o ID do jogo: ";
+    cin >> newGame.id;
+    cout << endl;
+
+    cout << "Digite o nome do jogo: ";
+    cin >> newGame.name;
+    cout << endl;
+
+    cout << "Digite o ano de lançamento do jogo: ";
+    cin >> newGame.age;
+    cout << endl;
+
+    cout << "Digite a(s) plataforma(s) em que o jogo foi lançado: ";
+    cin >> newGame.platform;
+    cout << endl;
+
+    cout << "Digite uma breve descrição sobre o jogo: ";
+    cin >> newGame.description;
+    cout << endl;
+
+    games[lines] = newGame;
+
+    lines++;
+
+    cout << "O jogo foi adicionado com sucesso" << endl;
+
+    return "";
 }
 
 int main()
 {
     setlocale(LC_ALL, "UTF-8");
 
+    int lines = 0, size = 40;
+
+    dataBase *games = new dataBase[size];
+
+    load(games, size, lines);
+
     int option = 0;
     while (option != 6)
     {
-        cout << "----- MENU PRINCIPAL -----\n\n";
+        cout << "--------- MENU PRINCIPAL ---------" << endl;
+        cout << endl;
         cout << "[1] - Cadastro de jogos" << endl;
         cout << "[2] - Consulta de jogos" << endl;
         cout << "[3] - Ordernar a lista de jogos" << endl;
         cout << "[4] - Excluir jogo" << endl;
         cout << "[5] - Salvar as alterações" << endl;
         cout << "[6] - Sair" << endl;
+        cout << endl;
         cout << "Escolha uma opção: ";
         cin >> option;
+        cout << endl;
 
         switch (option)
         {
         case 1:
-            cout << add();
+            cout << add(games, size, lines) << endl;
             break;
         case 2:
-            cout << "";
+            cout << search(games, lines) << endl;
             break;
         case 3:
             cout << "";
@@ -133,15 +199,18 @@ int main()
             break;
         case 6:
             cout << "Encerrando sistema..." << endl;
+            cout << endl;
             break;
         default:
             cout << "Digite uma opcao valida" << endl;
+            cout << endl;
             break;
         }
     }
 
     return 0;
 }
+
 /*int main()
 {
     ifstream file("Banco_de_dados.csv");
