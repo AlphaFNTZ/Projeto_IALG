@@ -32,8 +32,8 @@ void load(dataBase *&games, int &size, int &lines)
 
     getline(inputFile, line); // linha de descrição de dados
 
-    while (getline(inputFile, line))
     // while (lines <= 2)
+    while (getline(inputFile, line))
     {
         if (lines >= size)
         {
@@ -111,16 +111,19 @@ void save(dataBase *games, int lines)
     }
 
     // Escrever cabeçalho se necessário
-    outputFile << "ID;Nome;Ano;Plataforma;Descrição;Disponível" << endl;
+    outputFile << '"' << "Identificador;Nome;Ano de lancamento;Plataforma;Descricao;Disponibilidade" << '"' << endl;
 
     for (int i = 0; i < lines; i++)
     {
-        outputFile << games[i].id << ";" << games[i].name << ";" << games[i].age << ";" << games[i].platform << ";" << games[i].description << ";" << (games[i].available ? "true" : "false") << endl;
+        outputFile << '"' << games[i].id << ";" << games[i].name << ";" << games[i].age << ";" << games[i].platform << ";" << games[i].description << ";" << (games[i].available ? "true" : "false") << '"' << endl;
     }
 
     outputFile.close();
 
-    cout << "Dados salvos com sucesso no arquivo Banco_de_dados.csv" << endl;
+    cout << "------------------------------------" << endl;
+    cout << endl;
+    cout << "Dados salvos com sucesso no arquivo" << endl;
+    cout << endl;
 }
 
 string search(dataBase *games, int lines)
@@ -407,41 +410,3 @@ int main()
 
     return 0;
 }
-
-/*int main()
-{
-    ifstream file("Banco_de_dados.csv");
-    string line, name, plataform, description;
-    int location = 0, id = 0, age = 0;
-
-    getline(file, line); // Linha de descrição
-    getline(file, line); // Linha de dados
-
-    location = line.find(';');
-    id = stoi(line.substr(1, location));
-    line = line.substr(location + 1, line.length());
-
-    location = line.find(';');
-    name = line.substr(2, location - 4);
-    line = line.substr(location + 1, line.length());
-
-    location = line.find(';');
-    age = stoi(line.substr(0, location));
-    line = line.substr(location + 1, line.length());
-
-    location = line.find(';');
-    plataform = line.substr(0, location);
-    line = line.substr(location + 1, line.length());
-
-    description = line.substr(2, line.length() - 5);
-
-    setlocale(LC_ALL, "");
-    cout
-        << id << endl
-        << name << endl
-        << age << endl
-        << plataform << endl
-        << description << endl;
-
-    return 0;
-}*/
