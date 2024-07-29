@@ -100,25 +100,128 @@ void load(dataBase *&games, int &size, int &lines)
     cout << endl;
 }
 
-string search(dataBase *&games, int &lines)
+void save(dataBase *games, int lines)
 {
+    ofstream outputFile("Banco_de_dados.csv");
+
+    if (!outputFile)
+    {
+        cerr << "Erro ao abrir o arquivo para escrita." << endl;
+        return;
+    }
+
+    // Escrever cabeçalho se necessário
+    outputFile << "ID;Nome;Ano;Plataforma;Descrição;Disponível" << endl;
+
     for (int i = 0; i < lines; i++)
     {
-        if (games[i].available == true)
-        {
-            cout << "------------------------------------" << endl;
-            cout << endl;
-            cout << "ID do jogo: " << games[i].id << endl;
-            cout << "Nome do jogo: " << games[i].name << endl;
-            cout << "Ano de lançamento: " << games[i].age << endl;
-            cout << "Plataforma de lançamento: " << games[i].platform << endl;
-            cout << "Descrição do jogo: " << games[i].description << endl;
-            cout << endl;
-        }
+        outputFile << games[i].id << ";" << games[i].name << ";" << games[i].age << ";" << games[i].platform << ";" << games[i].description << ";" << (games[i].available ? "true" : "false") << endl;
     }
-    cout << "------------------------------------" << endl;
+
+    outputFile.close();
+
+    cout << "Dados salvos com sucesso no arquivo Banco_de_dados.csv" << endl;
+}
+
+string search(dataBase *games, int lines)
+{
+    int option = 0, idSearch = 0, error = 0;
+    string nameSearch = "";
+
+    cout << "----------- MENU DE PESQUISA -----------" << endl;
     cout << endl;
-    cout << "Leitura da lista de jogos concluida com sucesso" << endl;
+
+    cout << "[1] - Pequisar atráves do ID" << endl;
+    cout << "[2] - Pequisar atráves do Nome" << endl;
+    cout << "[3] - Listar todos os jogos" << endl;
+    cout << "[4] - Sair" << endl;
+    cout << endl;
+    cout << "Escolha uma opção: ";
+    cin >> option;
+    cout << endl;
+
+    switch (option)
+    {
+    case 1:
+        cout << "Digite o ID do jogo: ";
+        cin >> idSearch;
+        cout << endl;
+        for (int i = 0; i < lines; i++)
+        {
+            if (games[i].available == true && games[i].id == idSearch)
+            {
+                cout << "------------------------------------" << endl;
+                cout << endl;
+                cout << "ID do jogo: " << games[i].id << endl;
+                cout << "Nome do jogo: " << games[i].name << endl;
+                cout << "Ano de lançamento: " << games[i].age << endl;
+                cout << "Plataforma de lançamento: " << games[i].platform << endl;
+                cout << "Descrição do jogo: " << games[i].description << endl;
+                cout << endl;
+            }
+            else
+            {
+                error++;
+            }
+        }
+        if (error == lines)
+        {
+            cout << "O jogo com o ID " << idSearch << " não está cadastrado" << endl;
+        }
+        error = 0;
+        break;
+    case 2:
+        cout << "Digite o nome do jogo: ";
+        cin.ignore();
+        getline(cin, nameSearch);
+        cout << endl;
+        for (int i = 0; i < lines; i++)
+        {
+            if (games[i].available == true && games[i].name == nameSearch)
+            {
+                cout << "------------------------------------" << endl;
+                cout << endl;
+                cout << "ID do jogo: " << games[i].id << endl;
+                cout << "Nome do jogo: " << games[i].name << endl;
+                cout << "Ano de lançamento: " << games[i].age << endl;
+                cout << "Plataforma de lançamento: " << games[i].platform << endl;
+                cout << "Descrição do jogo: " << games[i].description << endl;
+                cout << endl;
+            }
+            else
+            {
+                error++;
+            }
+        }
+        if (error == lines)
+        {
+            cout << "O jogo com o nome " << nameSearch << " não está cadastrado" << endl;
+        }
+        error = 0;
+        break;
+    case 3:
+        for (int i = 0; i < lines; i++)
+        {
+            if (games[i].available == true)
+            {
+                cout << "------------------------------------" << endl;
+                cout << endl;
+                cout << "ID do jogo: " << games[i].id << endl;
+                cout << "Nome do jogo: " << games[i].name << endl;
+                cout << "Ano de lançamento: " << games[i].age << endl;
+                cout << "Plataforma de lançamento: " << games[i].platform << endl;
+                cout << "Descrição do jogo: " << games[i].description << endl;
+                cout << endl;
+            }
+        }
+        break;
+    case 4:
+        cout << "------------------------------------" << endl;
+        cout << endl;
+        cout << "Retornado ao menu pricipal" << endl;
+        cout << endl;
+        break;
+    }
 
     return "";
 }
@@ -199,7 +302,7 @@ string add(dataBase *&games, int &size, int &lines)
     return "";
 }
 
-string deleted(dataBase *&games, int &lines)
+string deleted(dataBase *&games, int lines)
 {
     int deleted = 0, nonexistent = 0;
 
@@ -245,8 +348,6 @@ string deleted(dataBase *&games, int &lines)
 
 int main()
 {
-    setlocale(LC_ALL, "UTF-8");
-
     int lines = 0, size = 40;
 
     dataBase *games = new dataBase[size];
@@ -254,6 +355,9 @@ int main()
     load(games, size, lines);
 
     int option = 0;
+
+    setlocale(LC_ALL, "UTF-8");
+
     while (option != 6)
     {
         cout << "---------- MENU PRINCIPAL ----------" << endl;
@@ -284,7 +388,7 @@ int main()
             cout << deleted(games, lines) << endl;
             break;
         case 5:
-            cout << "";
+            save(games, lines);
             break;
         case 6:
             cout << "------------------------------------" << endl;
