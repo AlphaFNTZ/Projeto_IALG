@@ -96,7 +96,7 @@ void load(dataBase *&games, int &size, int &lines)
     cout << endl;
     cout << "------------------------------------" << endl;
     cout << endl;
-    cout << "Pré-leitura do arquivo concluida com sucesso" << endl;
+    cout << "Pre-leitura do arquivo concluida com sucesso" << endl;
     cout << endl;
 }
 
@@ -134,12 +134,12 @@ string search(dataBase *games, int lines)
     cout << "----------- MENU DE PESQUISA -----------" << endl;
     cout << endl;
 
-    cout << "[1] - Pequisar atráves do ID" << endl;
-    cout << "[2] - Pequisar atráves do Nome" << endl;
+    cout << "[1] - Pequisar atraves do ID" << endl;
+    cout << "[2] - Pequisar atraves do Nome" << endl;
     cout << "[3] - Listar todos os jogos" << endl;
     cout << "[4] - Sair" << endl;
     cout << endl;
-    cout << "Escolha uma opção: ";
+    cout << "Escolha uma opcao: ";
     cin >> option;
     cout << endl;
 
@@ -157,9 +157,9 @@ string search(dataBase *games, int lines)
                 cout << endl;
                 cout << "ID do jogo: " << games[i].id << endl;
                 cout << "Nome do jogo: " << games[i].name << endl;
-                cout << "Ano de lançamento: " << games[i].age << endl;
-                cout << "Plataforma de lançamento: " << games[i].platform << endl;
-                cout << "Descrição do jogo: " << games[i].description << endl;
+                cout << "Ano de lancamento: " << games[i].age << endl;
+                cout << "Plataforma de lancamento: " << games[i].platform << endl;
+                cout << "Descricao do jogo: " << games[i].description << endl;
                 cout << endl;
             }
             else
@@ -169,7 +169,7 @@ string search(dataBase *games, int lines)
         }
         if (error == lines)
         {
-            cout << "O jogo com o ID " << idSearch << " não está cadastrado" << endl;
+            cout << "O jogo com o ID " << idSearch << " nao esta cadastrado" << endl;
         }
         error = 0;
         break;
@@ -186,9 +186,9 @@ string search(dataBase *games, int lines)
                 cout << endl;
                 cout << "ID do jogo: " << games[i].id << endl;
                 cout << "Nome do jogo: " << games[i].name << endl;
-                cout << "Ano de lançamento: " << games[i].age << endl;
-                cout << "Plataforma de lançamento: " << games[i].platform << endl;
-                cout << "Descrição do jogo: " << games[i].description << endl;
+                cout << "Ano de lancamento: " << games[i].age << endl;
+                cout << "Plataforma de lancamento: " << games[i].platform << endl;
+                cout << "Descricao do jogo: " << games[i].description << endl;
                 cout << endl;
             }
             else
@@ -198,7 +198,7 @@ string search(dataBase *games, int lines)
         }
         if (error == lines)
         {
-            cout << "O jogo com o nome " << nameSearch << " não está cadastrado" << endl;
+            cout << "O jogo com o nome " << nameSearch << " não esta cadastrado" << endl;
         }
         error = 0;
         break;
@@ -211,9 +211,9 @@ string search(dataBase *games, int lines)
                 cout << endl;
                 cout << "ID do jogo: " << games[i].id << endl;
                 cout << "Nome do jogo: " << games[i].name << endl;
-                cout << "Ano de lançamento: " << games[i].age << endl;
-                cout << "Plataforma de lançamento: " << games[i].platform << endl;
-                cout << "Descrição do jogo: " << games[i].description << endl;
+                cout << "Ano de lancamento: " << games[i].age << endl;
+                cout << "Plataforma de lancamento: " << games[i].platform << endl;
+                cout << "Descricao do jogo: " << games[i].description << endl;
                 cout << endl;
             }
         }
@@ -222,6 +222,12 @@ string search(dataBase *games, int lines)
         cout << "------------------------------------" << endl;
         cout << endl;
         cout << "Retornado ao menu pricipal" << endl;
+        cout << endl;
+        break;
+    default:
+        cout << "------------------------------------" << endl;
+        cout << endl;
+        cout << "Numero de opcao invalida" << endl;
         cout << endl;
         break;
     }
@@ -264,16 +270,16 @@ string add(dataBase *&games, int &size, int &lines)
     getline(cin, newGame.name);
     cout << endl;
 
-    cout << "Digite o ano de lançamento do jogo: ";
+    cout << "Digite o ano de lancamento do jogo: ";
     cin >> newGame.age;
     cout << endl;
 
-    cout << "Digite a(s) plataforma(s) em que o jogo foi lançado: ";
+    cout << "Digite a(s) plataforma(s) em que o jogo foi lancado: ";
     cin.ignore();
     getline(cin, newGame.platform);
     cout << endl;
 
-    cout << "Digite uma breve descrição sobre o jogo: ";
+    cout << "Digite uma breve descricao sobre o jogo: ";
     getline(cin, newGame.description);
     cout << endl;
 
@@ -291,7 +297,7 @@ string add(dataBase *&games, int &size, int &lines)
     {
         cout << "------------------------------------" << endl;
         cout << endl;
-        cout << "O jogo com o nome (" << newGame.name << ") já foi cadastrado" << endl;
+        cout << "O jogo com o nome (" << newGame.name << ") ja foi cadastrado" << endl;
     }
     else
     {
@@ -331,7 +337,7 @@ string deleted(dataBase *&games, int lines)
         {
             cout << "------------------------------------" << endl;
             cout << endl;
-            cout << "O jogo com o ID " << deleted << " já foi apagado" << endl;
+            cout << "O jogo com o ID " << deleted << " ja foi apagado" << endl;
             return "";
         }
         else
@@ -342,7 +348,7 @@ string deleted(dataBase *&games, int lines)
 
     if (nonexistent == lines)
     {
-        cout << "O jogo com o ID " << deleted << " não foi encontrado" << endl;
+        cout << "O jogo com o ID " << deleted << " nao foi encontrado" << endl;
         return "";
     }
 
@@ -359,7 +365,7 @@ int main()
 
     int option = 0;
 
-    setlocale(LC_ALL, "UTF-8");
+    // setlocale(LC_ALL, "UTF-8");
 
     while (option != 6)
     {
@@ -369,10 +375,10 @@ int main()
         cout << "[2] - Consulta de jogos" << endl;
         cout << "[3] - Ordernar a lista de jogos" << endl;
         cout << "[4] - Excluir jogo" << endl;
-        cout << "[5] - Salvar as alterações" << endl;
+        cout << "[5] - Salvar as alteracoes" << endl;
         cout << "[6] - Sair" << endl;
         cout << endl;
-        cout << "Escolha uma opção: ";
+        cout << "Escolha uma opcao: ";
         cin >> option;
         cout << endl;
 
@@ -402,7 +408,7 @@ int main()
         default:
             cout << "------------------------------------" << endl;
             cout << endl;
-            cout << "Número de opção invalida" << endl;
+            cout << "Numero de opcao invalida" << endl;
             cout << endl;
             break;
         }
