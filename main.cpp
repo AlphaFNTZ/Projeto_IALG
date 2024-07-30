@@ -93,6 +93,8 @@ void load(dataBase *&games, int &size, int &lines)
         // cout << endl;
     }
 
+    inputFile.close();
+
     cout << endl;
     cout << "------------------------------------" << endl;
     cout << endl;
@@ -259,10 +261,6 @@ string add(dataBase *&games, int &size, int &lines)
     cout << "--------- MENU DE CADASTRO ---------" << endl;
     cout << endl;
 
-    // cout << "Digite o ID do jogo: ";
-    // cin >> newGame.id;
-    // cout << endl;
-
     newGame.id = (lines + 1);
 
     cout << "Digite o nome do jogo: ";
@@ -355,6 +353,162 @@ string deleted(dataBase *&games, int lines)
     return "";
 }
 
+string edit(dataBase *&games, int lines)
+{
+    int option = 0, idSearch = 0;
+    string nameSearch = "";
+
+    dataBase newData;
+
+    cout << "--------- MENU DE CADASTRO ---------" << endl;
+    cout << endl;
+    cout << "[1] - Pequisar atraves do ID" << endl;
+    cout << "[2] - Pequisar atraves do Nome" << endl;
+    cout << "[3] - Sair" << endl;
+    cout << endl;
+    cout << "Escolha uma opcao: ";
+    cin >> option;
+    cout << endl;
+
+    switch (option)
+    {
+    case 1:
+        cout << "Digite o ID do jogo: ";
+        cin >> idSearch;
+        cout << endl;
+        for (int i = 0; i < lines; i++)
+        {
+            if (games[i].available == true && games[i].id == idSearch)
+            {
+                cout << "----- DADOS DO JOGO ESCOLHIDO -----" << endl;
+                cout << endl;
+                cout << "ID do jogo: " << games[i].id << endl;
+                cout << "Nome do jogo: " << games[i].name << endl;
+                cout << "Ano de lancamento: " << games[i].age << endl;
+                cout << "Plataforma de lancamento: " << games[i].platform << endl;
+                cout << "Descricao do jogo: " << games[i].description << endl;
+                cout << endl;
+                cout << "------------------------------------" << endl;
+                cout << endl;
+                cout << "---------- EDICAO DE DADOS ---------" << endl;
+                cout << endl;
+
+                newData.id = games[i].id;
+
+                cout << "Digite o nome do jogo: ";
+                cin.ignore();
+                getline(cin, newData.name);
+                cout << endl;
+
+                cout << "Digite o ano de lancamento do jogo: ";
+                cin >> newData.age;
+                cout << endl;
+
+                cout << "Digite a(s) plataforma(s) em que o jogo foi lancado: ";
+                cin.ignore();
+                getline(cin, newData.platform);
+                cout << endl;
+
+                cout << "Digite uma breve descricao sobre o jogo: ";
+                getline(cin, newData.description);
+                cout << endl;
+
+                newData.available = games[i].available;
+
+                if (games[i].available == false)
+                {
+                    cout << "------------------------------------" << endl;
+                    cout << endl;
+                    cout << "Esse jogo nao esta disponivel" << endl;
+                }
+                else
+                {
+                    games[i] = newData;
+                    cout << "------------------------------------" << endl;
+                    cout << endl;
+                    cout << "O jogo foi editado com sucesso" << endl;
+                }
+            }
+        }
+        break;
+    case 2:
+        cout << "Digite o nome do jogo: ";
+        cin.ignore();
+        getline(cin, nameSearch);
+        cout << endl;
+
+        for (int i = 0; i < lines; i++)
+        {
+            if (games[i].available == true && games[i].name == nameSearch)
+            {
+                cout << "----- DADOS DO JOGO ESCOLHIDO -----" << endl;
+                cout << endl;
+                cout << "ID do jogo: " << games[i].id << endl;
+                cout << "Nome do jogo: " << games[i].name << endl;
+                cout << "Ano de lancamento: " << games[i].age << endl;
+                cout << "Plataforma de lancamento: " << games[i].platform << endl;
+                cout << "Descricao do jogo: " << games[i].description << endl;
+                cout << endl;
+                cout << "------------------------------------" << endl;
+                cout << endl;
+                cout << "---------- EDICAO DE DADOS ---------" << endl;
+                cout << endl;
+
+                newData.id = games[i].id;
+
+                cout << "Digite o nome do jogo: ";
+                cin.ignore();
+                getline(cin, newData.name);
+                cout << endl;
+
+                cout << "Digite o ano de lancamento do jogo: ";
+                cin >> newData.age;
+                cout << endl;
+
+                cout << "Digite a(s) plataforma(s) em que o jogo foi lancado: ";
+                cin.ignore();
+                getline(cin, newData.platform);
+                cout << endl;
+
+                cout << "Digite uma breve descricao sobre o jogo: ";
+                getline(cin, newData.description);
+                cout << endl;
+
+                newData.available = games[i].available;
+
+                if (games[i].available == false)
+                {
+                    cout << "------------------------------------" << endl;
+                    cout << endl;
+                    cout << "Esse jogo nao esta disponivel" << endl;
+                }
+                else
+                {
+                    games[i] = newData;
+                    cout << "------------------------------------" << endl;
+                    cout << endl;
+                    cout << "O jogo foi adicionado com sucesso" << endl;
+                }
+            }
+        }
+        break;
+    case 3:
+        cout << "------------------------------------" << endl;
+        cout << endl;
+        cout << "Retornado ao menu pricipal" << endl;
+        cout << endl;
+        break;
+    default:
+        cout << "------------------------------------" << endl;
+        cout << endl;
+        cout << "Numero de opcao invalida" << endl;
+        cout << endl;
+        break;
+    }
+
+    return "";
+}
+
 int main()
 {
     int lines = 0, size = 40;
@@ -372,11 +526,12 @@ int main()
         cout << "---------- MENU PRINCIPAL ----------" << endl;
         cout << endl;
         cout << "[1] - Cadastro de jogos" << endl;
-        cout << "[2] - Consulta de jogos" << endl;
-        cout << "[3] - Ordernar a lista de jogos" << endl;
-        cout << "[4] - Excluir jogo" << endl;
-        cout << "[5] - Salvar as alteracoes" << endl;
-        cout << "[6] - Sair" << endl;
+        cout << "[2] - Editar cadastro de jogos" << endl;
+        cout << "[3] - Consulta de jogos" << endl;
+        cout << "[4] - Ordernar a lista de jogos" << endl;
+        cout << "[5] - Excluir jogo" << endl;
+        cout << "[6] - Salvar as alteracoes" << endl;
+        cout << "[7] - Sair" << endl;
         cout << endl;
         cout << "Escolha uma opcao: ";
         cin >> option;
@@ -388,22 +543,26 @@ int main()
             cout << add(games, size, lines) << endl;
             break;
         case 2:
-            cout << search(games, lines) << endl;
+            cout << edit(games, lines) << endl;
             break;
         case 3:
-            cout << "";
+            cout << search(games, lines) << endl; // Fazer a opção de começo e inicio
             break;
         case 4:
-            cout << deleted(games, lines) << endl;
+            cout << "";
             break;
         case 5:
-            save(games, lines);
+            cout << deleted(games, lines) << endl;
             break;
         case 6:
+            save(games, lines);
+            break;
+        case 7:
             cout << "------------------------------------" << endl;
             cout << endl;
             cout << "Encerrando sistema..." << endl;
             cout << endl;
+            return 0;
             break;
         default:
             cout << "------------------------------------" << endl;
@@ -413,6 +572,8 @@ int main()
             break;
         }
     }
+
+    delete[] games;
 
     return 0;
 }
