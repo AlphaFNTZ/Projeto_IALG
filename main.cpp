@@ -130,7 +130,7 @@ void save(dataBase *games, int lines)
 
 string search(dataBase *games, int lines)
 {
-    int option = 0, idSearch = 0, error = 0;
+    int option = 0, idSearch = 0, error = 0, start = 0, end = 0;
     string nameSearch = "";
 
     cout << "----------- MENU DE PESQUISA -----------" << endl;
@@ -138,8 +138,9 @@ string search(dataBase *games, int lines)
 
     cout << "[1] - Pequisar atraves do ID" << endl;
     cout << "[2] - Pequisar atraves do Nome" << endl;
-    cout << "[3] - Listar todos os jogos" << endl;
-    cout << "[4] - Sair" << endl;
+    cout << "[3] - Pequisar atraves de um intervalo entre linhas" << endl;
+    cout << "[4] - Listar todos os jogos" << endl;
+    cout << "[5] - Sair" << endl;
     cout << endl;
     cout << "Escolha uma opcao: ";
     cin >> option;
@@ -205,6 +206,76 @@ string search(dataBase *games, int lines)
         error = 0;
         break;
     case 3:
+        cout << "----------- MENU DE PESQUISA -----------" << endl;
+        cout << endl;
+
+        cout << "Requer dois numeros indicando o inicio e o fim do intervalo dentro da lista" << endl;
+        cout << endl;
+        cout << "Digite o primeiro numero: ";
+        cin >> start;
+        cout << endl;
+        cout << "Digite o segundo numero: ";
+        cin >> end;
+        cout << endl;
+
+        if (start < 0 || start > lines)
+        {
+            cout << "------------------------------------" << endl;
+            cout << endl;
+            cout << "O primeiro numero nao tem uma linha correspondente" << endl;
+            break;
+        }
+
+        if (end < 0 || end > lines)
+        {
+            cout << "------------------------------------" << endl;
+            cout << endl;
+            cout << "O segundo numero nao tem um linha correspondente" << endl;
+            break;
+        }
+
+        if (start < end)
+        {
+            for (int i = (start - 1); i < end; i++)
+            {
+                if (games[i].available == true)
+                {
+                    cout << "------------------------------------" << endl;
+                    cout << endl;
+                    cout << "ID do jogo: " << games[i].id << endl;
+                    cout << "Nome do jogo: " << games[i].name << endl;
+                    cout << "Ano de lancamento: " << games[i].age << endl;
+                    cout << "Plataforma de lancamento: " << games[i].platform << endl;
+                    cout << "Descricao do jogo: " << games[i].description << endl;
+                    cout << endl;
+                }
+            }
+        }
+        else if (end < start)
+        {
+            for (int i = (end - 1); i < start; i++)
+            {
+                if (games[i].available == true)
+                {
+                    cout << "------------------------------------" << endl;
+                    cout << endl;
+                    cout << "ID do jogo: " << games[i].id << endl;
+                    cout << "Nome do jogo: " << games[i].name << endl;
+                    cout << "Ano de lancamento: " << games[i].age << endl;
+                    cout << "Plataforma de lancamento: " << games[i].platform << endl;
+                    cout << "Descricao do jogo: " << games[i].description << endl;
+                    cout << endl;
+                }
+            }
+        }
+        else
+        {
+            cout << "------------------------------------" << endl;
+            cout << endl;
+            cout << "Os numero digitados nao corresponde a um intervalo valido" << endl;
+        }
+        break;
+    case 4:
         for (int i = 0; i < lines; i++)
         {
             if (games[i].available == true)
@@ -220,7 +291,7 @@ string search(dataBase *games, int lines)
             }
         }
         break;
-    case 4:
+    case 5:
         cout << "------------------------------------" << endl;
         cout << endl;
         cout << "Retornado ao menu pricipal" << endl;
