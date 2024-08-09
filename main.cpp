@@ -113,7 +113,7 @@ void quickSort(dataBase *games, int low, int high, bool order, string type)
     }
 }
 
-void load(dataBase *&games, int &size, int &lines)
+void loadFromCsv(dataBase *&games, int &size, int &lines)
 {
     int location = 0;
     string line = "";
@@ -198,7 +198,71 @@ void load(dataBase *&games, int &size, int &lines)
     cout << endl;
 }
 
-void save(dataBase *games, int lines)
+void loadFromBinary(dataBase *&games, int &size, int &lines)
+{
+    ifstream inputFile("Banco_de_dados.bin", ios::binary);
+
+    if (!inputFile)
+    {
+        cerr << "Erro ao abrir o arquivo binario." << endl;
+        return;
+    }
+
+    while (inputFile.peek() != EOF) // Verifica se chegou ao fim do arquivo
+    {
+        if (lines >= size)
+        {
+            // Redimensionar o array se necessário
+            dataBase *newGames = new dataBase[size + 10];
+            for (int i = 0; i < size; i++)
+            {
+                newGames[i] = games[i];
+            }
+            delete[] games;
+            games = newGames;
+            size += 10;
+        }
+
+        // Leitura do ID
+        inputFile.read(reinterpret_cast<char *>(&games[lines].id), sizeof(games[lines].id));
+
+        // Leitura do nome
+        int stringSize;
+        inputFile.read(reinterpret_cast<char *>(&stringSize), sizeof(stringSize));
+        games[lines].name.resize(stringSize);
+        inputFile.read(&games[lines].name[0], stringSize);
+
+        // Leitura da data
+        inputFile.read(reinterpret_cast<char *>(&stringSize), sizeof(stringSize));
+        games[lines].date.resize(stringSize);
+        inputFile.read(&games[lines].date[0], stringSize);
+
+        // Leitura da categoria
+        inputFile.read(reinterpret_cast<char *>(&stringSize), sizeof(stringSize));
+        games[lines].category.resize(stringSize);
+        inputFile.read(&games[lines].category[0], stringSize);
+
+        // Leitura do criador
+        inputFile.read(reinterpret_cast<char *>(&stringSize), sizeof(stringSize));
+        games[lines].creator.resize(stringSize);
+        inputFile.read(&games[lines].creator[0], stringSize);
+
+        // Leitura da disponibilidade
+        inputFile.read(reinterpret_cast<char *>(&games[lines].available), sizeof(games[lines].available));
+
+        lines++;
+    }
+
+    inputFile.close();
+
+    cout << endl;
+    cout << "------------------------------------" << endl;
+    cout << endl;
+    cout << "Pre-leitura do arquivo binario concluida com sucesso" << endl;
+    cout << endl;
+}
+
+void saveToCsv(dataBase *games, int lines)
 {
 
     ofstream outputFile("Banco_de_dados.csv");
@@ -228,7 +292,27 @@ void save(dataBase *games, int lines)
     cout << endl;
 }
 
-string ordination(dataBase *&games, int lines)
+void saveToBinary(dataBase *games, int size)
+{
+    ofstream outputFile("Banco_de_dados.bin", ios::binary);
+
+    if (!outputFile)
+    {
+        cerr << "Erro ao abrir o arquivo binario para escrita." << endl;
+        return;
+    }
+
+    for (int i = 0; i < size; ++i)
+    {
+        outputFile.write(reinterpret_cast<char *>(&games[i]), sizeof(dataBase));
+    }
+
+    outputFile.close();
+    cout << "Dados salvos em formato binario com sucesso no arquivo: Banco_de_dados.bin" << endl;
+    cout << endl;
+}
+
+void ordination(dataBase *&games, int lines)
 {
     int option = 0;
 
@@ -286,11 +370,9 @@ string ordination(dataBase *&games, int lines)
         cout << endl;
         break;
     }
-
-    return "";
 }
 
-string search(dataBase *games, int lines)
+void search(dataBase *games, int lines)
 {
     int option = 0, idSearch = 0, error = 0, start = 0, end = 0;
     string nameSearch = "";
@@ -514,11 +596,9 @@ string search(dataBase *games, int lines)
         cout << endl;
         break;
     }
-
-    return "";
 }
 
-string add(dataBase *&games, int &size, int &lines)
+void add(dataBase *&games, int &size, int &lines)
 {
     bool equal = false;
     // setlocale(LC_ALL, "UTF-8");
@@ -586,11 +666,9 @@ string add(dataBase *&games, int &size, int &lines)
         cout << endl;
         cout << "O jogo foi adicionado com sucesso" << endl;
     }
-
-    return "";
 }
 
-string deleted(dataBase *&games, int lines)
+void deleted(dataBase *&games, int lines)
 {
     int deleted = 0, nonexistent = 0;
 
@@ -610,14 +688,12 @@ string deleted(dataBase *&games, int lines)
             cout << "------------------------------------" << endl;
             cout << endl;
             cout << "O jogo com o ID " << deleted << " foi apagado com sucesso" << endl;
-            return "";
         }
         else if (games[i].id == deleted && games[i].available == false)
         {
             cout << "------------------------------------" << endl;
             cout << endl;
             cout << "O jogo com o ID " << deleted << " ja foi apagado" << endl;
-            return "";
         }
         else
         {
@@ -628,13 +704,10 @@ string deleted(dataBase *&games, int lines)
     if (nonexistent == lines)
     {
         cout << "O jogo com o ID " << deleted << " nao foi encontrado" << endl;
-        return "";
     }
-
-    return "";
 }
 
-string edit(dataBase *&games, int lines)
+void edit(dataBase *&games, int lines)
 {
     int option = 0, idSearch = 0;
     string nameSearch = "";
@@ -786,23 +859,39 @@ string edit(dataBase *&games, int lines)
         cout << endl;
         break;
     }
-
-    return "";
 }
 
 int main()
 {
-    int lines = 0, size = 40;
+    int lines = 0, size = 40, option = 0;
 
     dataBase *games = new dataBase[size];
 
-    load(games, size, lines);
+    cout << "------- MENU DE CARREGAMENTO -------" << endl;
+    cout << endl;
+    cout << "Escolha qual e o formato do arquivo que sera carregado" << endl;
+    cout << endl;
+    cout << "[1] - Arquivo formato .csv" << endl;
+    cout << "[2] - Arquivo formato .bin" << endl;
+    cout << endl;
+    cout << "Escolha uma opcao: ";
+    cin >> option;
 
-    int option = 0;
+    switch (option)
+    {
+    case 1:
+        loadFromCsv(games, size, lines);
+        break;
+    case 2:
+        loadFromBinary(games, size, lines);
+        break;
+    default:
+        break;
+    }
 
-    // setlocale(LC_ALL, "UTF-8");
+    option = 0;
 
-    while (option != 7)
+    while (option != 8)
     {
         cout << "---------- MENU PRINCIPAL ----------" << endl;
         cout << endl;
@@ -811,8 +900,9 @@ int main()
         cout << "[3] - Consulta de jogos" << endl;
         cout << "[4] - Ordernar a lista de jogos" << endl;
         cout << "[5] - Excluir jogo" << endl;
-        cout << "[6] - Salvar as alteracoes" << endl;
-        cout << "[7] - Sair" << endl;
+        cout << "[6] - Salvar as alteracoes como .CSV" << endl;
+        cout << "[7] - Salvar as alteracoes como .BIN" << endl;
+        cout << "[8] - Sair" << endl;
         cout << endl;
         cout << "Escolha uma opcao: ";
         cin >> option;
@@ -840,9 +930,12 @@ int main()
             cout << endl;
             break;
         case 6:
-            save(games, lines);
+            saveToCsv(games, lines);
             break;
         case 7:
+            saveToBinary(games, lines);
+            break;
+        case 8:
             cout << "------------------------------------" << endl;
             cout << endl;
             cout << "Encerrando sistema..." << endl;
