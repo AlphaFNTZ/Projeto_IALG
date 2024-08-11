@@ -4,6 +4,9 @@
 #include <iostream>
 #include <fstream>
 #include <locale.h>
+#include <algorithm>
+#include <string>
+#include <bitset>
 
 using namespace std;
 
@@ -16,6 +19,36 @@ struct dataBase
     string creator;
     bool available;
 };
+
+void convertTextToBinary(string &text)
+{
+    string binaryString = "";
+
+    for (char c : text)
+    {
+        // Convertendo cada caractere em sua representação binária
+        binaryString += bitset<8>(c).to_string() + " ";
+    }
+
+    text = binaryString;
+}
+
+void convertBinaryToText(string &binaryText)
+{
+    string text = "";
+    // Processa cada bloco de 8 bits (1 byte)
+    for (size_t i = 0; i < binaryText.size(); i += 8)
+    {
+        // Extrai um bloco de 8 bits
+        string byteString = binaryText.substr(i, 8);
+        // Converte o bloco binário para um valor decimal (char)
+        char character = static_cast<char>(bitset<8>(byteString).to_ulong());
+        // Adiciona o caractere à string resultante
+        text += character;
+    }
+
+    binaryText = text;
+}
 
 // Função para trocar dois elementos
 void swap(dataBase &x, dataBase &y)
@@ -200,15 +233,21 @@ void loadFromCsv(dataBase *&games, int &size, int &lines)
 
 void loadFromBinary(dataBase *&games, int &size, int &lines)
 {
-    ifstream inputFile("Banco_de_dados.bin", ios::binary);
+    int location = 0;
+    string line = "";
+
+    ifstream inputFile("Banco_de_dados.txt");
 
     if (!inputFile)
     {
-        cerr << "Erro ao abrir o arquivo binario." << endl;
+        cerr << "Erro ao abrir o arquivo." << endl;
         return;
     }
 
-    while (inputFile.peek() != EOF) // Verifica se chegou ao fim do arquivo
+    getline(inputFile, line); // linha de descrição de dados
+
+    // while (lines <= 2)
+    while (getline(inputFile, line))
     {
         if (lines >= size)
         {
@@ -223,34 +262,55 @@ void loadFromBinary(dataBase *&games, int &size, int &lines)
             size += 10;
         }
 
-        // Leitura do ID
-        inputFile.read(reinterpret_cast<char *>(&games[lines].id), sizeof(games[lines].id));
+        line.erase(remove(line.begin(), line.end(), ' '), line.end());
+        convertBinaryToText(line);
 
-        // Leitura do nome
-        int stringSize;
-        inputFile.read(reinterpret_cast<char *>(&stringSize), sizeof(stringSize));
-        games[lines].name.resize(stringSize);
-        inputFile.read(&games[lines].name[0], stringSize);
+        cout << line << endl;
 
-        // Leitura da data
-        inputFile.read(reinterpret_cast<char *>(&stringSize), sizeof(stringSize));
-        games[lines].date.resize(stringSize);
-        inputFile.read(&games[lines].date[0], stringSize);
+        cout << "Verificando ID..." << endl;
 
-        // Leitura da categoria
-        inputFile.read(reinterpret_cast<char *>(&stringSize), sizeof(stringSize));
-        games[lines].category.resize(stringSize);
-        inputFile.read(&games[lines].category[0], stringSize);
+        location = line.find(';');
+        cout << location << endl;
+        games[lines].id = stoi(line.substr(1, location));
+        line = line.substr(location + 1, line.length());
 
-        // Leitura do criador
-        inputFile.read(reinterpret_cast<char *>(&stringSize), sizeof(stringSize));
-        games[lines].creator.resize(stringSize);
-        inputFile.read(&games[lines].creator[0], stringSize);
+        // cout << "Verificando nome..." << endl;
 
-        // Leitura da disponibilidade
-        inputFile.read(reinterpret_cast<char *>(&games[lines].available), sizeof(games[lines].available));
+        location = line.find(';');
+        games[lines].name = line.substr(0, location);
+        line = line.substr(location + 1, line.length());
+
+        // cout << "Verificando ano..." << endl;
+
+        location = line.find(';');
+        games[lines].date = line.substr(0, location);
+        line = line.substr(location + 1, line.length());
+
+        // cout << "Verificando plataforma..." << endl;
+
+        location = line.find(';');
+        games[lines].category = line.substr(0, location);
+        line = line.substr(location + 1, line.length());
+
+        // cout << "Verificando descrição..." << endl;
+
+        location = line.find(';');
+        games[lines].creator = line.substr(0, location);
+        line = line.substr(location + 1, line.length());
+
+        if ((line.substr(0, line.length() - 1)) == "true")
+        {
+            games[lines].available = true;
+        }
+        else
+        {
+            games[lines].available = false;
+        }
 
         lines++;
+
+        // cout << "A linha " << lines << " foi escrita com sucesso" << endl;
+        // cout << endl;
     }
 
     inputFile.close();
@@ -258,7 +318,7 @@ void loadFromBinary(dataBase *&games, int &size, int &lines)
     cout << endl;
     cout << "------------------------------------" << endl;
     cout << endl;
-    cout << "Pre-leitura do arquivo binario concluida com sucesso" << endl;
+    cout << "Pre-leitura do arquivo concluida com sucesso" << endl;
     cout << endl;
 }
 
@@ -292,23 +352,36 @@ void saveToCsv(dataBase *games, int lines)
     cout << endl;
 }
 
-void saveToBinary(dataBase *games, int size)
+void saveToBinary(dataBase *games, int lines)
 {
-    ofstream outputFile("Banco_de_dados.bin", ios::binary);
+    ofstream outputFile("Banco_de_dados.txt");
 
     if (!outputFile)
     {
-        cerr << "Erro ao abrir o arquivo binario para escrita." << endl;
+        cout << "------------------------------------" << endl;
+        cout << endl;
+        cout << "Erro ao abrir o arquivo para escrita." << endl;
+        cout << endl;
         return;
     }
 
-    for (int i = 0; i < size; ++i)
+    // Escrever cabeçalho se necessário
+    string header = '"' + "Id;Nome;Data;Categoria;Criadora;Disponibilidade" + '"';
+    convertTextToBinary(header);
+    outputFile << header << endl;
+
+    for (int i = 0; i < lines; i++)
     {
-        outputFile.write(reinterpret_cast<char *>(&games[i]), sizeof(dataBase));
+        string data = '"' + games[i].id + ";" + games[i].name + ";" + games[i].date + ";" + games[i].category + ";" + games[i].creator + ";" + (games[i].available ? "true" : "false") + '"';
+        convertTextToBinary(data);
+        outputFile << data << endl;
     }
 
     outputFile.close();
-    cout << "Dados salvos em formato binario com sucesso no arquivo: Banco_de_dados.bin" << endl;
+
+    cout << "------------------------------------" << endl;
+    cout << endl;
+    cout << "Dados salvos com sucesso no arquivo" << endl;
     cout << endl;
 }
 
