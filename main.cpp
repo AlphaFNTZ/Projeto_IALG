@@ -1,13 +1,12 @@
-// Alunos: Juliano Cesar Ferreira Ramos, Bruna Motta de Macedo, Livia Pessoa de Andrade
+// Alunos: Juliano Cesar Ferreira Ramos, Livia Pessoa de Andrade
 // Turma: 22A
 
 #include <iostream>
 #include <fstream>
 #include <locale.h>
-#include <algorithm>
-#include <string>
-#include <sstream>
-#include <bitset>
+// Procurar saber essas bombas daí
+#include <string> // Linha 49
+#include <bitset> // Linha 31
 
 using namespace std;
 
@@ -21,66 +20,38 @@ struct dataBase
     bool available;
 };
 
-/*void convertTextToBinary(string &text)
-{
-    ostringstream binaryStream;
-
-    for (char c : text)
-    {
-        // Convertendo cada caractere em sua representação binária e adicionando ao stream
-        binaryStream << bitset<8>(c).to_string() << " ";
-    }
-
-    // Atribuindo o conteúdo do stream para a string original
-    text = binaryStream.str();
-}*/
-
+// TIRAR DUVIDAS SOBRE
 void convertTextToBinary(string &text)
 {
     string binaryString = "";
 
     for (char c : text)
     {
-        // Convertendo cada caractere em sua representação binária
-        binaryString += bitset<8>(c).to_string() + " ";
+        // Convertendo cada caractere em para o binario correspondente
+        // O que é biset<8>?
+        binaryString += bitset<8>(c).to_string();
     }
 
     text = binaryString;
 }
 
+// TIRAR DUVIDAS SOBRE
 void convertBinaryToText(string &binaryText)
 {
     string text = "";
     for (size_t i = 0; i < binaryText.size(); i += 8)
     {
-        // Extrai um bloco de 8 bits
+        // Extrai uma parte de 8 bits, pois aparentemente é assim que funciona o binario
         string byteString = binaryText.substr(i, 8);
-        // Converte o bloco binário para um valor decimal (char) usando stoi com base 2
+        // Converte a parte de 8 bits em binário para texto usando stoi com base 2
+        // O que é static_cast?
         char character = static_cast<char>(stoi(byteString, nullptr, 2));
-        // Adiciona o caractere à string resultante
+        // Adiciona o caractere convertido à string resultado
         text += character;
     }
 
     binaryText = text;
 }
-
-/*void convertBinaryToText(string &binaryText)
-{
-    string text = "";
-    // Processa cada bloco de 8 bits (1 byte)
-    for (size_t i = 0; i < binaryText.size(); i += 8)
-    {
-        // Extrai um bloco de 8 bits
-        string byteString = binaryText.substr(i, 8);
-        // Converte o bloco binário para um valor decimal (char)
-        char character = static_cast<char>(bitset<8>(byteString).to_ulong());
-        // Adiciona o caractere à string resultante
-        text += character;
-        cout << character << " " << endl;
-    }
-
-    binaryText = text;
-}*/
 
 // Função para trocar dois elementos
 void swap(dataBase &x, dataBase &y)
@@ -107,7 +78,7 @@ int partitionId(dataBase *games, int low, int high, bool order)
             }
         }
     }
-    else
+    else if (order == false)
     {
         for (int j = low; j < high; j++)
         {
@@ -141,7 +112,7 @@ int partitionName(dataBase *games, int low, int high, bool order)
             }
         }
     }
-    else
+    else if (order == false)
     {
         for (int j = low; j < high; j++)
         {
@@ -158,6 +129,7 @@ int partitionName(dataBase *games, int low, int high, bool order)
     return (i + 1);
 }
 
+// TIRAR DUVIDAS SOBRE
 // Função de ordenação Quick Sort para o nome e o ID
 void quickSort(dataBase *games, int low, int high, bool order, string type)
 {
@@ -169,7 +141,7 @@ void quickSort(dataBase *games, int low, int high, bool order, string type)
             quickSort(games, low, pi - 1, order, type);
             quickSort(games, pi + 1, high, order, type);
         }
-        else
+        else if (type == "name")
         {
             int pi = partitionName(games, low, high, order);
             quickSort(games, low, pi - 1, order, type);
@@ -193,7 +165,6 @@ void loadFromCsv(dataBase *&games, int &size, int &lines)
 
     getline(inputFile, line); // linha de descrição de dados
 
-    // while (lines <= 2)
     while (getline(inputFile, line))
     {
         if (lines >= size)
@@ -209,31 +180,21 @@ void loadFromCsv(dataBase *&games, int &size, int &lines)
             size += 10;
         }
 
-        // cout << "Verificando ID..." << endl;
-
         location = line.find(';');
         games[lines].id = stoi(line.substr(1, location));
         line = line.substr(location + 1, line.length());
-
-        // cout << "Verificando nome..." << endl;
 
         location = line.find(';');
         games[lines].name = line.substr(0, location);
         line = line.substr(location + 1, line.length());
 
-        // cout << "Verificando ano..." << endl;
-
         location = line.find(';');
         games[lines].date = line.substr(0, location);
         line = line.substr(location + 1, line.length());
 
-        // cout << "Verificando plataforma..." << endl;
-
         location = line.find(';');
         games[lines].category = line.substr(0, location);
         line = line.substr(location + 1, line.length());
-
-        // cout << "Verificando descrição..." << endl;
 
         location = line.find(';');
         games[lines].creator = line.substr(0, location);
@@ -249,9 +210,6 @@ void loadFromCsv(dataBase *&games, int &size, int &lines)
         }
 
         lines++;
-
-        // cout << "A linha " << lines << " foi escrita com sucesso" << endl;
-        // cout << endl;
     }
 
     inputFile.close();
@@ -278,7 +236,6 @@ void loadFromBinary(dataBase *&games, int &size, int &lines)
 
     getline(inputFile, line); // linha de descrição de dados
 
-    // while (lines <= 2)
     while (getline(inputFile, line))
     {
         if (lines >= size)
@@ -294,36 +251,24 @@ void loadFromBinary(dataBase *&games, int &size, int &lines)
             size += 10;
         }
 
-        line.erase(remove(line.begin(), line.end(), ' '), line.end());
+        // Converte as linhas de binario para texto
         convertBinaryToText(line);
-
-        // cout << line << endl;
-
-        // cout << "Verificando ID..." << endl;
 
         location = line.find(';');
         games[lines].id = stoi(line.substr(1, location));
         line = line.substr(location + 1, line.length());
 
-        // cout << "Verificando nome..." << endl;
-
         location = line.find(';');
         games[lines].name = line.substr(0, location);
         line = line.substr(location + 1, line.length());
-
-        // cout << "Verificando ano..." << endl;
 
         location = line.find(';');
         games[lines].date = line.substr(0, location);
         line = line.substr(location + 1, line.length());
 
-        // cout << "Verificando plataforma..." << endl;
-
         location = line.find(';');
         games[lines].category = line.substr(0, location);
         line = line.substr(location + 1, line.length());
-
-        // cout << "Verificando descrição..." << endl;
 
         location = line.find(';');
         games[lines].creator = line.substr(0, location);
@@ -339,9 +284,6 @@ void loadFromBinary(dataBase *&games, int &size, int &lines)
         }
 
         lines++;
-
-        // cout << "A linha " << lines << " foi escrita com sucesso" << endl;
-        // cout << endl;
     }
 
     inputFile.close();
@@ -501,33 +443,6 @@ void search(dataBase *games, int lines)
     switch (option)
     {
     case 1:
-        /*cout << "Digite o ID do jogo: ";
-        cin >> idSearch;
-        cout << endl;
-        for (int i = 0; i < lines; i++)
-        {
-            if (games[i].available == true && games[i].id == idSearch)
-            {
-                cout << "------------------------------------" << endl;
-                cout << endl;
-                cout << "ID do jogo: " << games[i].id << endl;
-                cout << "Nome do jogo: " << games[i].name << endl;
-                cout << "Data de lancamento: " << games[i].date << endl;
-                cout << "Categoria: " << games[i].category << endl;
-                cout << "Desenvolvedor: " << games[i].creator << endl;
-                cout << endl;
-            }
-            else
-            {
-                error++;
-            }
-        }
-        if (error == lines)
-        {
-            cout << "O jogo com o ID " << idSearch << " nao esta cadastrado" << endl;
-        }
-        error = 0;*/
-
         cout << "Digite o ID do jogo: ";
         cin >> idSearch;
         cout << endl;
@@ -705,7 +620,7 @@ void search(dataBase *games, int lines)
 void add(dataBase *&games, int &size, int &lines)
 {
     bool equal = false;
-    // setlocale(LC_ALL, "UTF-8");
+
     if (lines >= size)
     {
         // Redimensionar o array se necessário
@@ -720,8 +635,6 @@ void add(dataBase *&games, int &size, int &lines)
     }
 
     dataBase newGame;
-
-    // cout << lines << endl;
 
     cout << "--------- MENU DE CADASTRO ---------" << endl;
     cout << endl;
@@ -785,7 +698,6 @@ void deleted(dataBase *&games, int lines)
 
     for (int i = 0; i < lines; i++)
     {
-        // cout << games[i].id << endl;
         if (games[i].id == deleted && games[i].available == true)
         {
             games[i].available = false;
@@ -971,26 +883,33 @@ int main()
 
     dataBase *games = new dataBase[size];
 
-    cout << "------- MENU DE CARREGAMENTO -------" << endl;
-    cout << endl;
-    cout << "Escolha qual e o formato do arquivo que sera carregado" << endl;
-    cout << endl;
-    cout << "[1] - Arquivo formato .csv" << endl;
-    cout << "[2] - Arquivo formato .bin" << endl;
-    cout << endl;
-    cout << "Escolha uma opcao: ";
-    cin >> option;
-
-    switch (option)
+    while (option != 1 && option != 2)
     {
-    case 1:
-        loadFromCsv(games, size, lines);
-        break;
-    case 2:
-        loadFromBinary(games, size, lines);
-        break;
-    default:
-        break;
+        cout << "------- MENU DE CARREGAMENTO -------" << endl;
+        cout << endl;
+        cout << "Escolha qual e o formato do arquivo que sera carregado" << endl;
+        cout << endl;
+        cout << "[1] - Arquivo formato .csv" << endl;
+        cout << "[2] - Arquivo formato .bin" << endl;
+        cout << endl;
+        cout << "Escolha uma opcao: ";
+        cin >> option;
+
+        switch (option)
+        {
+        case 1:
+            loadFromCsv(games, size, lines);
+            break;
+        case 2:
+            loadFromBinary(games, size, lines);
+            break;
+        default:
+            cout << "------------------------------------" << endl;
+            cout << endl;
+            cout << "Numero de opcao invalida" << endl;
+            cout << endl;
+            break;
+        }
     }
 
     option = 0;
