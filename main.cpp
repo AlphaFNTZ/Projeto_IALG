@@ -6,6 +6,7 @@
 #include <locale.h>
 #include <algorithm>
 #include <string>
+#include <sstream>
 #include <bitset>
 
 using namespace std;
@@ -19,6 +20,20 @@ struct dataBase
     string creator;
     bool available;
 };
+
+/*void convertTextToBinary(string &text)
+{
+    ostringstream binaryStream;
+
+    for (char c : text)
+    {
+        // Convertendo cada caractere em sua representação binária e adicionando ao stream
+        binaryStream << bitset<8>(c).to_string() << " ";
+    }
+
+    // Atribuindo o conteúdo do stream para a string original
+    text = binaryStream.str();
+}*/
 
 void convertTextToBinary(string &text)
 {
@@ -36,6 +51,22 @@ void convertTextToBinary(string &text)
 void convertBinaryToText(string &binaryText)
 {
     string text = "";
+    for (size_t i = 0; i < binaryText.size(); i += 8)
+    {
+        // Extrai um bloco de 8 bits
+        string byteString = binaryText.substr(i, 8);
+        // Converte o bloco binário para um valor decimal (char) usando stoi com base 2
+        char character = static_cast<char>(stoi(byteString, nullptr, 2));
+        // Adiciona o caractere à string resultante
+        text += character;
+    }
+
+    binaryText = text;
+}
+
+/*void convertBinaryToText(string &binaryText)
+{
+    string text = "";
     // Processa cada bloco de 8 bits (1 byte)
     for (size_t i = 0; i < binaryText.size(); i += 8)
     {
@@ -45,10 +76,11 @@ void convertBinaryToText(string &binaryText)
         char character = static_cast<char>(bitset<8>(byteString).to_ulong());
         // Adiciona o caractere à string resultante
         text += character;
+        cout << character << " " << endl;
     }
 
     binaryText = text;
-}
+}*/
 
 // Função para trocar dois elementos
 void swap(dataBase &x, dataBase &y)
@@ -236,7 +268,7 @@ void loadFromBinary(dataBase *&games, int &size, int &lines)
     int location = 0;
     string line = "";
 
-    ifstream inputFile("Banco_de_dados.txt");
+    ifstream inputFile("Banco_de_dados.bin");
 
     if (!inputFile)
     {
@@ -265,12 +297,11 @@ void loadFromBinary(dataBase *&games, int &size, int &lines)
         line.erase(remove(line.begin(), line.end(), ' '), line.end());
         convertBinaryToText(line);
 
-        cout << line << endl;
+        // cout << line << endl;
 
-        cout << "Verificando ID..." << endl;
+        // cout << "Verificando ID..." << endl;
 
         location = line.find(';');
-        cout << location << endl;
         games[lines].id = stoi(line.substr(1, location));
         line = line.substr(location + 1, line.length());
 
@@ -354,7 +385,7 @@ void saveToCsv(dataBase *games, int lines)
 
 void saveToBinary(dataBase *games, int lines)
 {
-    ofstream outputFile("Banco_de_dados.txt");
+    ofstream outputFile("Banco_de_dados.bin");
 
     if (!outputFile)
     {
@@ -372,7 +403,7 @@ void saveToBinary(dataBase *games, int lines)
 
     for (int i = 0; i < lines; i++)
     {
-        string data = '"' + games[i].id + ";" + games[i].name + ";" + games[i].date + ";" + games[i].category + ";" + games[i].creator + ";" + (games[i].available ? "true" : "false") + '"';
+        string data = '"' + to_string(games[i].id) + ";" + games[i].name + ";" + games[i].date + ";" + games[i].category + ";" + games[i].creator + ";" + (games[i].available ? "true" : "false") + '"';
         convertTextToBinary(data);
         outputFile << data << endl;
     }
