@@ -766,7 +766,7 @@ void deleted(dataBase *&games, int lines)
 
     cout << "--------- MENU DE APAGAR JOGOS ---------" << endl;
     cout << endl;
-    cout << "[1] - Apagar arquivo por ID" << endl;
+    cout << "[1] - Apagar jogo por ID" << endl;
     cout << "[2] - Sair" << endl;
     cout << endl;
     cout << "Escolha uma opcao: ";
