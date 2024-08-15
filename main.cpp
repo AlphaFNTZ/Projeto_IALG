@@ -4,9 +4,8 @@
 #include <iostream>
 #include <fstream>
 #include <locale.h>
-// Procurar saber essas bombas daí
-#include <string> // Linha 49
-#include <bitset> // Linha 31
+#include <string>
+#include <bitset>
 
 using namespace std;
 
@@ -20,7 +19,6 @@ struct dataBase
     bool available;
 };
 
-// TIRAR DUVIDAS SOBRE
 void convertTextToBinary(string &text)
 {
     string binaryString = "";
@@ -28,14 +26,12 @@ void convertTextToBinary(string &text)
     for (char c : text)
     {
         // Convertendo cada caractere em para o binario correspondente
-        // O que é biset<8>?
         binaryString += bitset<8>(c).to_string();
     }
 
     text = binaryString;
 }
 
-// TIRAR DUVIDAS SOBRE
 void convertBinaryToText(string &binaryText)
 {
     string text = "";
@@ -44,7 +40,6 @@ void convertBinaryToText(string &binaryText)
         // Extrai uma parte de 8 bits, pois aparentemente é assim que funciona o binario
         string byteString = binaryText.substr(i, 8);
         // Converte a parte de 8 bits em binário para texto usando stoi com base 2
-        // O que é static_cast?
         char character = static_cast<char>(stoi(byteString, nullptr, 2));
         // Adiciona o caractere convertido à string resultado
         text += character;
@@ -53,17 +48,17 @@ void convertBinaryToText(string &binaryText)
     binaryText = text;
 }
 
-// Função para trocar dois elementos
 void swap(dataBase &x, dataBase &y)
 {
+    // Função para trocar dois elementos
     dataBase temp = x;
     x = y;
     y = temp;
 }
 
-// Função de particionamento do Quick Sort para o ID
 int partitionId(dataBase *games, int low, int high, bool order)
 {
+    // Função de particionamento do Quick Sort para o ID
     int pivot = games[high].id;
     int i = (low - 1);
 
@@ -95,9 +90,9 @@ int partitionId(dataBase *games, int low, int high, bool order)
     return (i + 1);
 }
 
-// Função de particionamento do Quick Sort para o nome
 int partitionName(dataBase *games, int low, int high, bool order)
 {
+    // Função de particionamento do Quick Sort para o nome
     string pivot = games[high].name;
     int i = (low - 1);
 
@@ -129,10 +124,9 @@ int partitionName(dataBase *games, int low, int high, bool order)
     return (i + 1);
 }
 
-// TIRAR DUVIDAS SOBRE
-// Função de ordenação Quick Sort para o nome e o ID
 void quickSort(dataBase *games, int low, int high, bool order, string type)
 {
+    // Função de ordenação Quick Sort para o nome e o ID
     if (low < high)
     {
         if (type == "id")
@@ -316,10 +310,12 @@ void saveToCsv(dataBase *games, int lines, int value)
 
     // Escrever cabeçalho se necessário
     outputFile << '"' << value << ";Id;Nome;Data;Categoria;Criadora;Disponibilidade" << '"' << endl;
-
     for (int i = 0; i < lines; i++)
     {
-        outputFile << '"' << games[i].id << ";" << games[i].name << ";" << games[i].date << ";" << games[i].category << ";" << games[i].creator << ";" << (games[i].available ? "true" : "false") << '"' << endl;
+        if (games[i].available == true)
+        {
+            outputFile << '"' << games[i].id << ";" << games[i].name << ";" << games[i].date << ";" << games[i].category << ";" << games[i].creator << ";" << (games[i].available ? "true" : "false") << '"' << endl;
+        }
     }
 
     outputFile.close();
@@ -350,9 +346,12 @@ void saveToBinary(dataBase *games, int lines, int value)
 
     for (int i = 0; i < lines; i++)
     {
-        string data = '"' + to_string(games[i].id) + ";" + games[i].name + ";" + games[i].date + ";" + games[i].category + ";" + games[i].creator + ";" + (games[i].available ? "true" : "false") + '"';
-        convertTextToBinary(data);
-        outputFile << data << endl;
+        if (games[i].available == true)
+        {
+            string data = '"' + to_string(games[i].id) + ";" + games[i].name + ";" + games[i].date + ";" + games[i].category + ";" + games[i].creator + ";" + (games[i].available ? "true" : "false") + '"';
+            convertTextToBinary(data);
+            outputFile << data << endl;
+        }
     }
 
     outputFile.close();
@@ -984,7 +983,7 @@ void edit(dataBase *&games, int lines)
 
 int main()
 {
-    int lines = 0, size = 40, option = 0, ordinationValue = 0;
+    int lines = 0, size = 40, option = 0, secondOption = 0, ordinationValue = 0;
 
     dataBase *games = new dataBase[size];
 
@@ -1055,9 +1054,61 @@ int main()
             break;
         case 6:
             saveToCsv(games, lines, ordinationValue);
+            cout << "------------------------------------" << endl;
+            cout << endl;
+            cout << "Voce deseja tambem salvar no arquivo .bin?" << endl;
+            cout << endl;
+            cout << "[1] - Sim" << endl;
+            cout << "[2] - Nao" << endl;
+            cout << endl;
+            cout << "Escolha uma opcao: ";
+            cin >> secondOption;
+            switch (secondOption)
+            {
+            case 1:
+                saveToBinary(games, lines, ordinationValue);
+                secondOption = 0;
+                break;
+            case 2:
+                cout << endl;
+                secondOption = 0;
+                break;
+            default:
+                cout << "------------------------------------" << endl;
+                cout << endl;
+                cout << "Numero de opcao invalida" << endl;
+                cout << endl;
+                break;
+            }
             break;
         case 7:
             saveToBinary(games, lines, ordinationValue);
+            cout << "------------------------------------" << endl;
+            cout << endl;
+            cout << "Voce deseja tambem salvar no arquivo .csv?" << endl;
+            cout << endl;
+            cout << "[1] - Sim" << endl;
+            cout << "[2] - Nao" << endl;
+            cout << endl;
+            cout << "Escolha uma opcao: ";
+            cin >> secondOption;
+            switch (secondOption)
+            {
+            case 1:
+                saveToCsv(games, lines, ordinationValue);
+                secondOption = 0;
+                break;
+            case 2:
+                cout << endl;
+                secondOption = 0;
+                break;
+            default:
+                cout << "------------------------------------" << endl;
+                cout << endl;
+                cout << "Numero de opcao invalida" << endl;
+                cout << endl;
+                break;
+            }
             break;
         case 8:
             cout << "------------------------------------" << endl;
