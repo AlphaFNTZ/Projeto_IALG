@@ -11,12 +11,12 @@ using namespace std;
 
 struct dataBase
 {
-    int id;
-    string name;
-    string date;
-    string category;
-    string creator;
-    bool available;
+    int id;          // Inteiros usados como identificação para os jogos
+    string name;     // String com ou sem espaços para o nome dos jogos
+    string date;     // String para a data de lançamento dos jogos
+    string category; // String com ou sem espaços para a descrição dos jogos
+    string creator;  // String com ou sem espaços para o nome do criador do jogo
+    bool available;  // Uma variavel booleana para a indentificação da existencia do jogo na lista
 };
 
 void convertTextToBinary(string &text)
@@ -50,7 +50,6 @@ void convertBinaryToText(string &binaryText)
 
 void swap(dataBase &x, dataBase &y)
 {
-    // Função para trocar dois elementos
     dataBase temp = x;
     x = y;
     y = temp;
@@ -377,6 +376,7 @@ void ordination(dataBase *&games, int lines, int &value)
     cout << "Escolha uma opcao: ";
     cin >> option;
     cout << endl;
+
     switch (option)
     {
     case 1:
@@ -437,18 +437,19 @@ void search(dataBase *games, int lines, int value)
 
     cout << "----------- MENU DE PESQUISA -----------" << endl;
     cout << endl;
-
     cout << "[1] - Pequisar atraves do ID" << endl;
     cout << "[2] - Pequisar atraves do Nome" << endl;
     cout << "[3] - Pequisar atraves de um intervalo entre linhas" << endl;
     cout << "[4] - Listar todos os jogos" << endl;
     cout << "[5] - Sair" << endl;
     cout << endl;
+
     if (value == 0)
     {
         cout << "Antes de realizar um pesquisa e recomendado ordernar a lista" << endl;
         cout << endl;
     }
+
     cout << "Escolha uma opcao: ";
     cin >> option;
     cout << endl;
@@ -487,7 +488,6 @@ void search(dataBase *games, int lines, int value)
                         cout << endl;
                     }
                     found = true;
-                    break;
                 }
                 else if (games[mid].id < idSearch)
                 {
@@ -506,8 +506,6 @@ void search(dataBase *games, int lines, int value)
                 cout << "O jogo com o ID " << idSearch << " nao esta cadastrado" << endl;
                 cout << endl;
             }
-
-            break;
         }
         else
         {
@@ -515,8 +513,8 @@ void search(dataBase *games, int lines, int value)
             cout << endl;
             cout << "A lista de jogos tem que esta ordernada por ID" << endl;
             cout << endl;
-            break;
         }
+        break;
     case 2:
         if (value == 2)
         {
@@ -580,7 +578,6 @@ void search(dataBase *games, int lines, int value)
             cout << endl;
             cout << "O primeiro numero nao tem uma linha correspondente" << endl;
             cout << endl;
-            break;
         }
 
         if (end < 0 || end > lines)
@@ -589,7 +586,6 @@ void search(dataBase *games, int lines, int value)
             cout << endl;
             cout << "O segundo numero nao tem um linha correspondente" << endl;
             cout << endl;
-            break;
         }
 
         if (start < end)
@@ -998,6 +994,7 @@ int main()
         cout << endl;
         cout << "Escolha uma opcao: ";
         cin >> option;
+        cout << endl;
 
         switch (option)
         {
@@ -1063,6 +1060,8 @@ int main()
             cout << endl;
             cout << "Escolha uma opcao: ";
             cin >> secondOption;
+            cout << endl;
+
             switch (secondOption)
             {
             case 1:
@@ -1092,6 +1091,8 @@ int main()
             cout << endl;
             cout << "Escolha uma opcao: ";
             cin >> secondOption;
+            cout << endl;
+
             switch (secondOption)
             {
             case 1:
